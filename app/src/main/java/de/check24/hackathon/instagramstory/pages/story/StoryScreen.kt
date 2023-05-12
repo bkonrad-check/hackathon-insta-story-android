@@ -64,7 +64,7 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
                 .fillMaxWidth()
                 .padding(5.dp),
             stepCount = stepCount,
-            stepDuration = 2_000,
+            stepDuration = chapter.length,
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
             currentStep = currentChapter.value,

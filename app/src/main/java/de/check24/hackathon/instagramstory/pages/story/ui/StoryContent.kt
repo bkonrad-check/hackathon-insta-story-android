@@ -49,13 +49,16 @@ fun StoryContent(
                     playWhenReady = true
                 }
             }
-            val rawVideoUri = Uri.parse("android.resource://${context.packageName}/${R.raw.example}")
 
-            val mediaItem = MediaItem.fromUri(rawVideoUri)
+            val mediaItem = MediaItem.fromUri(chapter.url)
             player.setMediaItem(mediaItem)
             // Prepare the player.
             player.prepare()
             // Adds view to Compose
+
+            if(chapter.startAt != null && chapter.endAt != null) {
+                player.seekTo(chapter.startAt.toLong())
+            }
 
             val playerView = remember {
                 PlayerView(context, null, 0).apply {

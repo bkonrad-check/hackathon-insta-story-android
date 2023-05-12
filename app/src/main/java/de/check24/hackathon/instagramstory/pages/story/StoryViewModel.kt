@@ -28,14 +28,14 @@ class StoryViewModel : ViewModel() {
 
     fun data() {
         viewModelScope.launch {
-            story = DataSource(RetrofitClient().createService()).stories().stories.first()
+            story = DataSource(RetrofitClient().createService()).stories().stories.get(3)
             mutableChapters.emit(story.chapters)
         }
     }
 
     fun navigateToNext() {
         viewModelScope.launch {
-            mutableCurrentChapter.emit(min(2, currentChapter.value + 1))
+            mutableCurrentChapter.emit(min(story.chapters.size - 1, currentChapter.value + 1))
         }
     }
 

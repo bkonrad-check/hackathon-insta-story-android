@@ -9,11 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import de.check24.hackathon.instagramstory.R
+import de.check24.hackathon.instagramstory.pages.story.data.StoryMedia
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 import kotlin.math.max
@@ -21,23 +22,15 @@ import kotlin.math.min
 
 @Composable
 fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
-    InstagramStory()
+    val data = viewModel.mediaData.collectAsStateWithLifecycle().value
+    InstagramStory(data)
 }
 
 @Composable
-fun InstagramStory() {
-    val images = remember {
-        listOf(
-            R.drawable.image_1,
-            R.drawable.image_2,
-            R.drawable.image_3,
-            R.drawable.image_4,
-            R.drawable.image_5,
-            R.drawable.image_6
-        )
-    }
+fun InstagramStory(stories: List<StoryMedia>) {
 
-    val stepCount = images.size
+
+    val stepCount = stories.size
     val currentStep = remember { mutableStateOf(0) }
     val isPaused = remember { mutableStateOf(false) }
 
@@ -64,7 +57,9 @@ fun InstagramStory() {
                 )
             }
 
-        StoryContent(imageModifier, currentStep, images)
+        val currentStory = stories [currentStep.value]
+
+        StoryContent(imageModifier, currentStory)
 
         InstagramProgressIndicator(
             modifier = Modifier

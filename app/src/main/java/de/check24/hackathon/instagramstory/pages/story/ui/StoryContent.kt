@@ -4,23 +4,27 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import de.check24.hackathon.instagramstory.pages.story.data.StoryImage
+import de.check24.hackathon.instagramstory.pages.story.data.StoryMedia
 
 @Composable
 fun StoryContent(
     modifier: Modifier,
-    currentStep: MutableState<Int>,
-    images: List<Int>
+    currentStep: StoryMedia
 ) {
     Box(modifier = modifier) {
-        Image(
-            painter = painterResource(id = images[currentStep.value]),
-            contentDescription = "StoryImage",
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier.fillMaxSize()
-        )
+        if(currentStep is StoryImage) {
+            Image(
+                painter = painterResource(id = currentStep.path),
+                contentDescription = "StoryImage",
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+
+        }
     }
 }

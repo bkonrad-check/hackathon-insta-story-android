@@ -6,12 +6,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
@@ -47,7 +49,8 @@ fun InstagramProgressIndicator(
                 modifier = Modifier
                     .weight(1f)
                     .padding(2.dp)
-                    .height(2.dp)
+                    .height(3.dp)
+                    .clip(RoundedCornerShape(14.dp))
             )
         }
     }

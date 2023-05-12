@@ -3,6 +3,9 @@ package de.check24.hackathon.instagramstory.pages.story
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.check24.hackathon.instagramstory.R
+import de.check24.hackathon.instagramstory.mod.ChapterApi
+import de.check24.hackathon.instagramstory.network.DataSource
+import de.check24.hackathon.instagramstory.network.RetrofitClient
 import de.check24.hackathon.instagramstory.pages.story.data.Chapter
 import de.check24.hackathon.instagramstory.pages.story.data.Story
 import de.check24.hackathon.instagramstory.pages.story.data.StoryImage
@@ -29,7 +32,18 @@ class StoryViewModel : ViewModel() {
     private lateinit var story: Story
 
     init {
-        provideMedia()
+        data()
+    }
+
+    fun data() {
+        viewModelScope.launch {
+             DataSource(RetrofitClient().createService()).stories().stories.map {
+                story = Story(
+                    title = it.title,
+                    description = it.preview,
+                    chapters = null)
+            }
+        }
     }
 
 
@@ -62,7 +76,7 @@ class StoryViewModel : ViewModel() {
             )
         )
         viewModelScope.launch {
-            mutableChapters.emit(story.chapters)
+            mutableChapters.emit(story.chapters!!)
         }
     }
 

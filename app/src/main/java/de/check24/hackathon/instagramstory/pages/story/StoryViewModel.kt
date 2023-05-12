@@ -9,6 +9,8 @@ import de.check24.hackathon.instagramstory.pages.story.data.StoryVideo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.max
+import kotlin.math.min
 
 class StoryViewModel : ViewModel() {
 
@@ -19,11 +21,9 @@ class StoryViewModel : ViewModel() {
     val currentChapter: StateFlow<Int> get() = mutableCurrentChapter
 
 
-
     init {
         provideMedia()
     }
-
 
 
     private fun provideMedia() {
@@ -38,13 +38,13 @@ class StoryViewModel : ViewModel() {
 
     fun navigateToNext() {
         viewModelScope.launch {
-            mutableCurrentChapter.emit(currentChapter.value + 1)
+            mutableCurrentChapter.emit(min(2, currentChapter.value + 1))
         }
     }
 
     fun navigateToPrevious() {
         viewModelScope.launch {
-            mutableCurrentChapter.emit(currentChapter.value + 1)
+            mutableCurrentChapter.emit(max(0, currentChapter.value - 1))
         }
     }
 

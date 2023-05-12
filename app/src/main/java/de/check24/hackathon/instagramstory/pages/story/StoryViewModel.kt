@@ -2,9 +2,10 @@ package de.check24.hackathon.instagramstory.pages.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.check24.hackathon.instagramstory.pages.data.Chapter
-import de.check24.hackathon.instagramstory.pages.data.Story
-import de.check24.hackathon.instagramstory.pages.home.data.mockAPIResponse
+import de.check24.hackathon.instagramstory.mod.ChapterApi
+import de.check24.hackathon.instagramstory.mod.Story
+import de.check24.hackathon.instagramstory.network.DataSource
+import de.check24.hackathon.instagramstory.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -13,8 +14,8 @@ import kotlin.math.min
 
 class StoryViewModel : ViewModel() {
 
-    private val mutableChapters = MutableStateFlow<List<Chapter>>(listOf())
-    val chapters: StateFlow<List<Chapter>> get() = mutableChapters
+    private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
+    val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
 
     private val mutableCurrentChapter = MutableStateFlow(0)
     val currentChapter: StateFlow<Int> get() = mutableCurrentChapter
@@ -22,14 +23,12 @@ class StoryViewModel : ViewModel() {
     private lateinit var story: Story
 
     init {
-        provideMedia()
+        data()
     }
 
-
-    private fun provideMedia() {
-        story = mockAPIResponse().first()
-
+    fun data() {
         viewModelScope.launch {
+            story = DataSource(RetrofitClient().createService()).stories().stories.first()
             mutableChapters.emit(story.chapters)
         }
     }

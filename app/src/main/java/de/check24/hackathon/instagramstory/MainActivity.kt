@@ -1,5 +1,6 @@
 package de.check24.hackathon.instagramstory
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

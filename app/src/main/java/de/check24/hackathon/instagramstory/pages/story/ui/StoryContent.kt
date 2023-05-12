@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
@@ -21,14 +20,14 @@ import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import de.check24.hackathon.instagramstory.R
-import de.check24.hackathon.instagramstory.pages.data.Chapter
+import de.check24.hackathon.instagramstory.mod.ChapterApi
 import de.check24.hackathon.instagramstory.ui.theme.Background
 
 
 @Composable
 fun StoryContent(
     modifier: Modifier,
-    chapter: Chapter
+    chapter: ChapterApi
 ) {
     Box(modifier = modifier) {
         if(chapter.type == "IMAGE") {

@@ -24,11 +24,12 @@ fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
 
 @Composable
 fun InstagramStory(viewModel: StoryViewModel) {
-
     val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
+
+    if(stepCount == 0) return
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val imageModifier = Modifier

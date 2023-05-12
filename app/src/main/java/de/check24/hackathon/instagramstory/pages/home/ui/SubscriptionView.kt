@@ -19,7 +19,7 @@ import de.check24.hackathon.instagramstory.pages.home.data.mockDataStories
 
 @ExperimentalCoilApi
 @Composable
-fun SubscriptionView() {
+fun StoryView() {
     Column(
         modifier = Modifier.padding(top = 20.dp)
     ) {
@@ -29,7 +29,7 @@ fun SubscriptionView() {
             color = Color.Black,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 10.dp)
+            modifier = Modifier.padding(bottom = 10.dp, start = 5.dp, end = 5.dp)
         )
         LazyRow {
             items(storyList.size) { index ->
@@ -40,7 +40,7 @@ fun SubscriptionView() {
                     modifier = Modifier
                         .height(160.dp)
                         .width(110.dp)
-                        .padding(end = 10.dp)
+                        .padding(end = 5.dp, start = 5.dp)
                         .background(color = Color.DarkGray, RoundedCornerShape(5.dp))
                 )
             }

@@ -6,13 +6,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import de.check24.hackathon.instagramstory.pages.home.ui.SubscriptionView
+import de.check24.hackathon.instagramstory.pages.home.ui.StoryView
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel(), onNavigateToStory: () -> Unit, onNavigateToPlayer: () -> Unit) {
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel(),
+    onNavigateToStory: () -> Unit,
+    onNavigateToPlayer: () -> Unit
+) {
     Column {
         Column {
-        SubscriptionView()
+            StoryView()
             Button(onClick = onNavigateToStory) {
                 Text(text = "See stories")
             }

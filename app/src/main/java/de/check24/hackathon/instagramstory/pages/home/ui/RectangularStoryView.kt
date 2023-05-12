@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import de.check24.hackathon.instagramstory.pages.home.data.Story
+import de.check24.hackathon.instagramstory.pages.data.Story
 
 /**
  * Rectangular story view
@@ -50,7 +50,7 @@ fun RectangularStoryView(
             Image(
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
-                        .data(data = story.coverImageURL)
+                        .data(data = story.preview)
                         .build()
                 ),
                 contentScale = ContentScale.Crop,

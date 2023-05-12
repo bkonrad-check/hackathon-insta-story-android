@@ -15,15 +15,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
-import de.check24.hackathon.instagramstory.pages.home.data.mockDataStories
+import de.check24.hackathon.instagramstory.mod.Story
 
 @ExperimentalCoilApi
 @Composable
-fun StoryView() {
+fun StoryView(onNavigateToStory: (Story) -> Unit, stories: List<Story>) {
     Column(
         modifier = Modifier.padding(top = 20.dp)
     ) {
-        val storyList = mockDataStories()
         Text(
             text = "Stories",
             color = Color.Black,
@@ -32,11 +31,12 @@ fun StoryView() {
             modifier = Modifier.padding(bottom = 10.dp, start = 5.dp, end = 5.dp)
         )
         LazyRow {
-            items(storyList.size) { index ->
+            items(stories.size) { index ->
                 RectangularStoryView(
                     shadowHeight = 100f,
-                    story = storyList[index],
+                    story = stories[index],
                     isLarge = false,
+                    onClick = onNavigateToStory,
                     modifier = Modifier
                         .height(160.dp)
                         .width(110.dp)

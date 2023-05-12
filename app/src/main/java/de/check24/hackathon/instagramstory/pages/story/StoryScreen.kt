@@ -1,6 +1,5 @@
 package de.check24.hackathon.instagramstory.pages.story
 
-import android.media.MediaPlayer
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,24 +9,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.R
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
-    InstagramStory(viewModel)
+fun StoryScreen(viewModel: StoryViewModel = viewModel(), story: Story) {
+    InstagramStory(viewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel) {
-    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
+fun InstagramStory(viewModel: StoryViewModel, story: Story) {
+    val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }

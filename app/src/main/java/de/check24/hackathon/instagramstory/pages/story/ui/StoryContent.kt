@@ -20,7 +20,7 @@ fun StoryContent(
             Image(
                 painter = painterResource(id = currentStep.path),
                 contentDescription = "StoryImage",
-                contentScale = ContentScale.FillHeight,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
         } else {

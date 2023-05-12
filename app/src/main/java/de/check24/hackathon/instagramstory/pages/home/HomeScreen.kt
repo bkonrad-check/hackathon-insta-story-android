@@ -9,12 +9,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import de.check24.hackathon.instagramstory.pages.home.ui.SubscriptionView
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel(), onNavigateToStory: () -> Unit) {
+fun HomeScreen(viewModel: HomeViewModel = viewModel(), onNavigateToStory: () -> Unit, onNavigateToPlayer: () -> Unit) {
     Column {
+        Column {
         SubscriptionView()
-        Button(onClick = onNavigateToStory) {
-            Text(text = "See stories")
-
+            Button(onClick = onNavigateToStory) {
+                Text(text = "See stories")
+            }
+        }
+        Box {
+            Button(onClick = onNavigateToPlayer) {
+                Text(text = "See video story")
+            }
         }
     }
 

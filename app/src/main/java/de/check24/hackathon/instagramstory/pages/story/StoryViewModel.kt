@@ -2,13 +2,9 @@ package de.check24.hackathon.instagramstory.pages.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.check24.hackathon.instagramstory.R
-import de.check24.hackathon.instagramstory.pages.story.data.Chapter
-import de.check24.hackathon.instagramstory.pages.story.data.Story
-import de.check24.hackathon.instagramstory.pages.story.data.StoryImage
-import de.check24.hackathon.instagramstory.pages.story.data.StoryMedia
-import de.check24.hackathon.instagramstory.pages.story.data.StoryMediaType
-import de.check24.hackathon.instagramstory.pages.story.data.StoryVideo
+import de.check24.hackathon.instagramstory.pages.data.Chapter
+import de.check24.hackathon.instagramstory.pages.data.Story
+import de.check24.hackathon.instagramstory.pages.home.data.mockAPIResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,9 +12,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class StoryViewModel : ViewModel() {
-
-    private val mutableMediaData = MutableStateFlow<List<StoryMedia>>(listOf())
-    val mediaData: StateFlow<List<StoryMedia>> get() = mutableMediaData
 
     private val mutableChapters = MutableStateFlow<List<Chapter>>(listOf())
     val chapters: StateFlow<List<Chapter>> get() = mutableChapters
@@ -34,33 +27,8 @@ class StoryViewModel : ViewModel() {
 
 
     private fun provideMedia() {
-        story = Story(
-            "First Story",
-            "This is a fancy story, it explains you in 24 easy steps how to do something",
-            listOf(
-                Chapter(
-                    StoryMediaType.Standalone,
-                    StoryMediaType.Standalone,
-                    StoryImage(R.drawable.image_1),
-                    null,
-                    null
-                ),
-                Chapter(
-                    StoryMediaType.Standalone,
-                    StoryMediaType.Standalone,
-                    StoryVideo(R.raw.example),
-                    null,
-                    null
-                ),
-                Chapter(
-                    StoryMediaType.Standalone,
-                    StoryMediaType.Standalone,
-                    StoryImage(R.drawable.image_2),
-                    null,
-                    null
-                )
-            )
-        )
+        story = mockAPIResponse().first()
+
         viewModelScope.launch {
             mutableChapters.emit(story.chapters)
         }

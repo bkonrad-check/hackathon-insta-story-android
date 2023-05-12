@@ -55,7 +55,7 @@ fun InstagramStory(viewModel: StoryViewModel) {
 
         val chapter = chapters [currentChapter.value]
 
-        StoryContent(imageModifier, chapter.media)
+        StoryContent(imageModifier, chapter)
 
         InstagramProgressIndicator(
             modifier = Modifier

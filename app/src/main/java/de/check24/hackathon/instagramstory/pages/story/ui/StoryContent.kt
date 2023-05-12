@@ -15,30 +15,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DataSpec
-import androidx.media3.datasource.RawResourceDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.LoopingMediaSource
-import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.extractor.ogg.OggExtractor
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import de.check24.hackathon.instagramstory.R
-import de.check24.hackathon.instagramstory.pages.story.data.StoryImage
-import de.check24.hackathon.instagramstory.pages.story.data.StoryMedia
+import de.check24.hackathon.instagramstory.pages.data.Chapter
 import de.check24.hackathon.instagramstory.ui.theme.Background
 
 
 @Composable
 fun StoryContent(
     modifier: Modifier,
-    currentStep: StoryMedia
+    chapter: Chapter
 ) {
     Box(modifier = modifier) {
-        if(currentStep is StoryImage) {
+        if(chapter.type == "IMAGE") {
             Image(
-                painter = painterResource(id = currentStep.path),
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = chapter.url)
+                        .build()
+                ),
                 contentDescription = "StoryImage",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

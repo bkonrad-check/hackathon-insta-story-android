@@ -1,12 +1,13 @@
 @file:UnstableApi package de.check24.hackathon.instagramstory.pages.story.ui
 
 
-import android.net.Uri
+import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -26,10 +27,23 @@ import de.check24.hackathon.instagramstory.ui.theme.Background
 @Composable
 fun StoryContent(
     modifier: Modifier,
-    chapter: ChapterApi
+    chapter: ChapterApi,
+    mediaPlayer: MediaPlayer?
 ) {
+
+    DisposableEffect(mediaPlayer) {
+        onDispose {
+            mediaPlayer?.apply {
+                if (isPlaying) stop()
+                reset()
+                release()
+            }
+        }
+    }
+
     Box(modifier = modifier) {
         if(chapter.type == "IMAGE") {
+            mediaPlayer?.start()
             Image(
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)

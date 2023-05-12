@@ -1,5 +1,6 @@
 package de.check24.hackathon.instagramstory.pages.story
 
+import android.media.MediaPlayer
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,11 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.check24.hackathon.instagramstory.R
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
@@ -28,6 +31,7 @@ fun InstagramStory(viewModel: StoryViewModel) {
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
+    val mediaPlayer = MediaPlayer.create(LocalContext.current, R.raw.audio)
 
     if(stepCount == 0) return
 
@@ -56,7 +60,7 @@ fun InstagramStory(viewModel: StoryViewModel) {
 
         val chapter = chapters [currentChapter.value]
 
-        StoryContent(imageModifier, chapter)
+        StoryContent(imageModifier, chapter,mediaPlayer)
 
         InstagramProgressIndicator(
             modifier = Modifier

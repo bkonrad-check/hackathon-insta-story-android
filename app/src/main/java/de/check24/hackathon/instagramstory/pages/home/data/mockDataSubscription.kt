@@ -1,6 +1,8 @@
 package de.check24.hackathon.instagramstory.pages.home.data
 
-import de.check24.hackathon.instagramstory.pages.data.Story
+import com.google.gson.GsonBuilder
+import de.check24.hackathon.instagramstory.mod.Storries
+import de.check24.hackathon.instagramstory.mod.Story
 
 fun mockDataStories(): List<Story> {
     return listOf(

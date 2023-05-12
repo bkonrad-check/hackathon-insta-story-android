@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import de.check24.hackathon.instagramstory.pages.data.Story
+import de.check24.hackathon.instagramstory.mod.Story
 
 /**
  * Rectangular story view

@@ -10,6 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import de.check24.hackathon.instagramstory.pages.home.HomeScreen
+import de.check24.hackathon.instagramstory.pages.story.StoryScreen
 import de.check24.hackathon.instagramstory.ui.theme.InstagramStoryTheme
 
 class MainActivity : ComponentActivity() {
@@ -17,30 +22,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InstagramStoryTheme {
+                val navController = rememberNavController()
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    NavHost(navController = navController, startDestination = "home") {
+                        composable("home") { HomeScreen(onNavigateToStory = {navController.navigate("story") }) }
+                        composable("story") { StoryScreen() }
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    InstagramStoryTheme {
-        Greeting("Android")
-    }
-}

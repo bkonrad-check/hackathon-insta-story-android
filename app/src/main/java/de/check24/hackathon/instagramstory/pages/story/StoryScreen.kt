@@ -22,16 +22,15 @@ import kotlin.math.min
 
 @Composable
 fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
-    val data = viewModel.mediaData.collectAsStateWithLifecycle().value
-    InstagramStory(data)
+    InstagramStory(viewModel)
 }
 
 @Composable
-fun InstagramStory(stories: List<StoryMedia>) {
+fun InstagramStory(viewModel: StoryViewModel) {
 
-
+    val stories = viewModel.mediaData.collectAsStateWithLifecycle().value
+    val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = stories.size
-    val currentStep = remember { mutableStateOf(0) }
     val isPaused = remember { mutableStateOf(false) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -40,10 +39,10 @@ fun InstagramStory(stories: List<StoryMedia>) {
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { offset ->
-                        currentStep.value = if (offset.x < constraints.maxWidth / 2) {
-                            max(0, currentStep.value - 1)
+                        if (offset.x < constraints.maxWidth / 2) {
+                            viewModel.navigateToPrevious()
                         } else {
-                            min(stepCount - 1, currentStep.value + 1)
+                            viewModel.navigateToNext()
                         }
                     },
                     onPress = {
@@ -57,7 +56,7 @@ fun InstagramStory(stories: List<StoryMedia>) {
                 )
             }
 
-        val currentStory = stories [currentStep.value]
+        val currentStory = stories [currentChapter.value]
 
         StoryContent(imageModifier, currentStory)
 
@@ -69,8 +68,8 @@ fun InstagramStory(stories: List<StoryMedia>) {
             stepDuration = 2_000,
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
-            currentStep = currentStep.value,
-            onStepChanged = { currentStep.value = it },
+            currentStep = currentChapter.value,
+            onStepChanged = { viewModel.navigateToNext()},
             isPaused = isPaused.value,
             onComplete = { }
         )

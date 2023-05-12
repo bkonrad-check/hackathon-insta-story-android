@@ -10,4 +10,11 @@ data class ChapterApi(
     val status: String,
     val type: String,
     val url: String
-)
+) {
+    fun isContinuousPlayback(): Boolean {
+        if (startAt != null && endAt != null) {
+            return startAt > 0
+        }
+        return false
+    }
+}

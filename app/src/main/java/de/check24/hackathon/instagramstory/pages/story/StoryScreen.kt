@@ -14,24 +14,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import de.check24.hackathon.instagramstory.pages.story.data.StoryMedia
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
-import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
-    val data = viewModel.mediaData.collectAsStateWithLifecycle().value
-    InstagramStory(data)
+    InstagramStory(viewModel)
 }
 
 @Composable
-fun InstagramStory(stories: List<StoryMedia>) {
+fun InstagramStory(viewModel: StoryViewModel) {
 
-
-    val stepCount = stories.size
-    val currentStep = remember { mutableStateOf(0) }
+    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
+    val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
+    val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -40,10 +36,10 @@ fun InstagramStory(stories: List<StoryMedia>) {
             .pointerInput(Unit) {
                 detectTapGestures(
                     onTap = { offset ->
-                        currentStep.value = if (offset.x < constraints.maxWidth / 2) {
-                            max(0, currentStep.value - 1)
+                        if (offset.x < constraints.maxWidth / 2) {
+                            viewModel.navigateToPrevious()
                         } else {
-                            min(stepCount - 1, currentStep.value + 1)
+                            viewModel.navigateToNext()
                         }
                     },
                     onPress = {
@@ -57,9 +53,9 @@ fun InstagramStory(stories: List<StoryMedia>) {
                 )
             }
 
-        val currentStory = stories [currentStep.value]
+        val chapter = chapters [currentChapter.value]
 
-        StoryContent(imageModifier, currentStory)
+        StoryContent(imageModifier, chapter.media)
 
         InstagramProgressIndicator(
             modifier = Modifier
@@ -69,8 +65,8 @@ fun InstagramStory(stories: List<StoryMedia>) {
             stepDuration = 2_000,
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
-            currentStep = currentStep.value,
-            onStepChanged = { currentStep.value = it },
+            currentStep = currentChapter.value,
+            onStepChanged = { viewModel.navigateToNext()},
             isPaused = isPaused.value,
             onComplete = { }
         )

@@ -2,6 +2,7 @@ package de.check24.hackathon.instagramstory.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val Background = Color(0xFF333333)
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

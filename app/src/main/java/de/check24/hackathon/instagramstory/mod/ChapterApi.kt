@@ -1,7 +1,12 @@
 package de.check24.hackathon.instagramstory.mod
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+
+@Parcelize
 data class ChapterApi(
-    val banners: List<Any>,
+
     val endAt: Int,
     val id: Int,
     val length: Int,
@@ -10,4 +15,4 @@ data class ChapterApi(
     val status: String,
     val type: String,
     val url: String
-)
+) :Parcelable

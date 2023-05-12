@@ -14,17 +14,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel()) {
-    InstagramStory(viewModel)
+fun StoryScreen(viewModel: StoryViewModel = viewModel(), story: Story) {
+    InstagramStory(viewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel) {
-    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
+fun InstagramStory(viewModel: StoryViewModel, story: Story) {
+    val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }

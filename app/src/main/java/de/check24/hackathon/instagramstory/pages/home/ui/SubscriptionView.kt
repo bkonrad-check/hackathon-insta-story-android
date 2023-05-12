@@ -15,8 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
-import de.check24.hackathon.instagramstory.pages.data.Story
-import de.check24.hackathon.instagramstory.pages.home.data.mockDataStories
+import de.check24.hackathon.instagramstory.mod.Story
 
 @ExperimentalCoilApi
 @Composable
@@ -37,7 +36,7 @@ fun StoryView(onNavigateToStory: (Story) -> Unit, stories: List<Story>) {
                     shadowHeight = 100f,
                     story = stories[index],
                     isLarge = false,
-                    onClick= onNavigateToStory,
+                    onClick = onNavigateToStory,
                     modifier = Modifier
                         .height(160.dp)
                         .width(110.dp)

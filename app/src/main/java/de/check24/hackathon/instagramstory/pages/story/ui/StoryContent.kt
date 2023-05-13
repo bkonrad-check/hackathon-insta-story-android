@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,9 +22,7 @@ import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import de.check24.hackathon.instagramstory.mod.ChapterApi
-import de.check24.hackathon.instagramstory.pages.story.StoryViewModel
 import de.check24.hackathon.instagramstory.ui.theme.Background
-
 
 @Composable
 fun StoryContent(
@@ -53,16 +52,22 @@ fun StoryContent(
                 }
             }
 
-            if (chapter.isContinuousPlayback().not()) {
-                val mediaItem = MediaItem.fromUri(chapter.url)
-                player.setMediaItem(mediaItem)
-                // Prepare the player.
+            val mediaItem = remember { mutableStateOf(MediaItem.fromUri(chapter.url)) }
+
+            // Prepare the player and load new media item when url changes.
+            LaunchedEffect(chapter.url) {
+                player.stop()
+                player.clearMediaItems()
+                mediaItem.value = MediaItem.fromUri(chapter.url)
+                player.setMediaItem(mediaItem.value)
                 player.prepare()
             }
 
-            // Adds view to Compose
-            if (chapter.startAt != null && chapter.endAt != null) {
-                player.seekTo(chapter.startAt.toLong())
+            // Seek to the specified start time only if necessary.
+            LaunchedEffect(chapter.startAt) {
+                if (chapter.startAt != null && chapter.endAt != null) {
+                    player.seekTo(chapter.startAt.toLong())
+                }
             }
 
             val playerView = remember {
@@ -74,14 +79,17 @@ fun StoryContent(
             }
             VideoSurface(playerView)
 
-            if (isPaused) {
-                player.pause()
-            } else {
-                player.play()
+            LaunchedEffect(isPaused) {
+                if (isPaused) {
+                    player.pause()
+                } else {
+                    player.play()
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun VideoSurface(playerView: PlayerView) {

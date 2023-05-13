@@ -38,8 +38,8 @@ fun StoryScreen(
 ) {
     viewModel.onNavigateToStory = { onNavigateToStory(it) }
     viewModel.onNavigateBack = { onNavigateBack() }
-    viewModel.onNavigateBackToHome = { onNavigateBackToHome }
-    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBack)
+    viewModel.onNavigateBackToHome = { onNavigateBackToHome() }
+    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBackToHome)
 }
 
 @Composable

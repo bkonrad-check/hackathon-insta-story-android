@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
-
     var onNavigateToStory: ((Story) -> Unit)?= null
     var onNavigateBack: (() -> Unit)?= null
     var onNavigateBackToHome: (() -> Unit)?= null

@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.check24.hackathon.instagramstory.mod.Cache
 import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
@@ -24,15 +25,26 @@ import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 @Composable
 fun StoryScreen(
     story: Story,
+    viewModel: StoryViewModel = viewModel(
+        factory = StoryViewModelFactory(
+            story,
+            LocalContext.current
+        )
+    ),
+    onNavigateToStory: (Story) -> Unit,
+    onBackPressed: () -> Unit
 ) {
-    val context = LocalContext.current
-    val viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story,context))
-    InstagramStory(viewModel, story)
+    InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel, story: Story) {
-    val chapters = story.chapters
+fun InstagramStory(
+    viewModel: StoryViewModel,
+    onNavigateToStory: (Story) -> Unit,
+    story: Story,
+    onBackPressed: () -> Unit
+) {
+    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
@@ -81,7 +93,15 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
             currentStep = currentChapter.value,
             onStepChanged = { viewModel.navigateToNext() },
             isPaused = isPaused.value,
-            onComplete = { }
+            onComplete = {
+                val stories = Cache.stories
+                if (stories.lastOrNull() == story) {
+                    onBackPressed()
+                } else {
+                    val nextStory = stories.indexOf(story) + 1
+                    onNavigateToStory(stories[nextStory])
+                }
+            }
         )
     }
 }

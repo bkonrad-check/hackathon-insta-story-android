@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StoryViewModel(private val story: Story, context: Context) : ViewModel() {
+class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
@@ -22,6 +22,14 @@ class StoryViewModel(private val story: Story, context: Context) : ViewModel() {
     init {
         mutableChapters.value = story.chapters
     }
+
+    private val player = AudioPlayer(context)
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying
+
+    val audioPlayer = createAudioPlayer()
+
 
     fun navigateToNext() {
         viewModelScope.launch {
@@ -34,15 +42,6 @@ class StoryViewModel(private val story: Story, context: Context) : ViewModel() {
             mutableCurrentChapter.emit(max(0, currentChapter.value - 1))
         }
     }
-
-    // audioplayer part
-
-    private val player = AudioPlayer(context)
-
-    private val _isPlaying = MutableStateFlow(false)
-    val isPlaying: StateFlow<Boolean> = _isPlaying
-
-    val audioPlayer = createAudioPlayer()
 
     fun togglePlayPause() {
         _isPlaying.value = !_isPlaying.value

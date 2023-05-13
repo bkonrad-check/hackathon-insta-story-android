@@ -22,12 +22,17 @@ import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndic
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel(), story: Story) {
-    InstagramStory(viewModel, story)
+fun StoryScreen(
+    story: Story,
+    viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story))
+) {
+    val context = LocalContext.current
+    val audioViewModel = viewModel(key = "audioViewModel") { AudioViewModel(context) }
+    InstagramStory(viewModel, audioViewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel, story: Story) {
+fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, story: Story) {
     val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size

@@ -52,15 +52,22 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             val story = it.arguments?.getParcelable<Story>("story")!!
-                            StoryScreen(story = story, onNavigateToStory = {
-                                val json = Uri.encode(Gson().toJson(it))
-                                navController.navigate("story/$json")
-                            }, onBackPressed = {
-                                navController.popBackStack(
-                                    navController.graph.startDestinationId,
-                                    inclusive = false
-                                )
-                            })
+                            StoryScreen(story = story,
+                                onNavigateToStory = {
+                                    val json = Uri.encode(Gson().toJson(it))
+                                    navController.navigate("story/$json")
+                                }, onNavigateBackToHome = {
+                                    if (navController.previousBackStackEntry != null) {
+                                        navController.popBackStack(
+                                            navController.graph.startDestinationId,
+                                            inclusive = false
+                                        )
+                                    }
+                                }, onNavigateBack = {
+                                    if (navController.previousBackStackEntry != null) {
+                                        navController.popBackStack()
+                                    }
+                                })
                         }
 
                     }

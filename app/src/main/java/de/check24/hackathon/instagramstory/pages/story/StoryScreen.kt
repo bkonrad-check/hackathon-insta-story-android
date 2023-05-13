@@ -1,5 +1,6 @@
 package de.check24.hackathon.instagramstory.pages.story
 
+import android.widget.Toast
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,11 +33,13 @@ fun StoryScreen(
         ),
     ),
     onNavigateToStory: (Story) -> Unit,
-    onBackPressed: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateBackToHome: () -> Unit
 ) {
     viewModel.onNavigateToStory = { onNavigateToStory(it) }
-    viewModel.onNavigateBack = { onBackPressed() }
-    InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
+    viewModel.onNavigateBack = { onNavigateBack() }
+    viewModel.onNavigateBackToHome = { onNavigateBackToHome() }
+    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBackToHome)
 }
 
 @Composable
@@ -86,7 +89,12 @@ fun InstagramStory(
             chapters[currentChapterIndex.value]
         }
         StoryContent(imageModifier, chapter, isPaused, seekFlag)
-        BannersDrawer(chapter.banners, viewModel::onInteractionClick)
+        BannersDrawer(
+            chapter.banners,
+            viewModel::onInteractionClick,
+            viewModel::onPress,
+            viewModel::onPressRelease
+        )
 
         InstagramProgressIndicator(
             stepCount,
@@ -98,6 +106,10 @@ fun InstagramStory(
             onBackPressed,
             onNavigateToStory,
         )
+
+        if (snackbar.value != null) {
+            Toast.makeText(LocalContext.current, snackbar.value, Toast.LENGTH_SHORT).show()
+        }
     }
 }
 

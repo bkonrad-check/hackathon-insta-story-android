@@ -2,6 +2,7 @@ package de.check24.hackathon.instagramstory.util
 
 import android.graphics.Color.parseColor
 import androidx.compose.ui.graphics.Color
+import kotlin.time.Duration
 
 fun String.colorFromHex() = Color(
     parseColor(
@@ -11,3 +12,10 @@ fun String.colorFromHex() = Color(
         },
     ),
 )
+
+fun Duration.humanReadableFormat(): String {
+    return this.toString()
+        .split(" ")
+        .first()
+        .lowercase()
+}

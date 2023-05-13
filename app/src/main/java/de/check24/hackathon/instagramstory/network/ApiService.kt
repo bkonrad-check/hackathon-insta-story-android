@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 
 interface ApiService {
-    @GET("/stories/list")
+    @GET("stories.list.php")
     suspend fun stories(): Response<Storries>
 }

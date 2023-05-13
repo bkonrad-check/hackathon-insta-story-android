@@ -26,6 +26,9 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
     private val mutableIsPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> get() = mutableIsPaused
 
+    private val mutableSnackbar: MutableStateFlow<String?> = MutableStateFlow(null)
+    val snackbar: StateFlow<String?> get() = mutableSnackbar
+
     init {
         mutableChapters.value = story.chapters
     }
@@ -103,4 +106,9 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
         audioPlayer.release() // Release resources when ViewModel is destroyed
     }
 
+    fun onInteractionClick(deepLink: String) {
+        viewModelScope.launch {
+            mutableSnackbar.emit("Clicked $deepLink")
+        }
+    }
 }

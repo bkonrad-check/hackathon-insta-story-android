@@ -23,13 +23,11 @@ import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
 @Composable
 fun StoryScreen(viewModel: StoryViewModel = viewModel(), story: Story) {
-    val context = LocalContext.current
-    val audioViewModel = viewModel(key = "audioViewModel") { AudioViewModel(context) }
-    InstagramStory(viewModel, audioViewModel, story)
+    InstagramStory(viewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, story: Story) {
+fun InstagramStory(viewModel: StoryViewModel, story: Story) {
     val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
@@ -37,7 +35,7 @@ fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, st
     val isPlaying by audioViewModel.isPlaying.collectAsState()
     if (!isPlaying) audioViewModel.audioPlayer.start()
 
-    if(stepCount == 0) return
+    if (stepCount == 0) return
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val imageModifier = Modifier
@@ -64,7 +62,7 @@ fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, st
                 )
             }
 
-        val chapter = chapters [currentChapter.value]
+        val chapter = chapters[currentChapter.value]
 
         StoryContent(imageModifier, chapter)
 
@@ -77,7 +75,7 @@ fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, st
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
             currentStep = currentChapter.value,
-            onStepChanged = { viewModel.navigateToNext()},
+            onStepChanged = { viewModel.navigateToNext() },
             isPaused = isPaused.value,
             onComplete = { }
         )

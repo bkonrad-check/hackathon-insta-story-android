@@ -11,7 +11,7 @@ class RetrofitClient() {
 
     private fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://b13f05a4-376f-4dc0-962e-ca4b7bdc2af4.mock.pstmn.io/")
+            .baseUrl("https://dev.whost.ml/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

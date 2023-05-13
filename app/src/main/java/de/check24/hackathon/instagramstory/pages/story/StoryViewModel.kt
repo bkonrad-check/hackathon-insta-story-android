@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
-    var onNavigateToStory: ((Story) -> Unit)?= null
-    var onNavigateBack: (() -> Unit)?= null
+    var onNavigateToStory: ((Story) -> Unit)? = null
+    var onNavigateBack: (() -> Unit)? = null
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
 
@@ -25,6 +25,9 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
     private val mutableIsPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> get() = mutableIsPaused
+
+    private val mutableSeekFlag = MutableStateFlow(1)
+    val seekFlag: StateFlow<Int> get() = mutableSeekFlag
 
     private val mutableSnackbar: MutableStateFlow<String?> = MutableStateFlow(null)
     val snackbar: StateFlow<String?> get() = mutableSnackbar
@@ -44,7 +47,6 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
         viewModelScope.launch {
             mutableIsPaused.emit(true)
             _isPlaying.value = false
-            Log.d("####", "onPress")
         }
     }
 
@@ -53,24 +55,23 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
             viewModelScope.launch {
                 mutableIsPaused.emit(false)
                 _isPlaying.value = true
-                Log.d("####", "onPressRelease")
             }
         }
     }
 
-    fun navigateToNext() {
+    fun navigateToNext(isAutomatic: Boolean = false) {
         viewModelScope.launch {
             val newIndex = min(story.chapters.size - 1, currentChapterIndex.value + 1)
             if (newIndex != mutableCurrentChapterIndex.value) {
                 Log.d("####", "navigateToNext")
                 mutableCurrentChapterIndex.emit(newIndex)
-            }
-            else if (newIndex == mutableCurrentChapterIndex.value) {
+                updateSeekFlag(isAutomatic, chapters.value[newIndex], false)
+            } else if (newIndex == mutableCurrentChapterIndex.value) {
                 val stories = Cache.stories
                 if (story == stories.lastOrNull()) {
                     onNavigateBack?.invoke()
                 } else {
-                    val nextStory = stories.indexOf(story) +1
+                    val nextStory = stories.indexOf(story) + 1
                     onNavigateToStory?.invoke(Cache.stories[nextStory])
                 }
             }
@@ -81,9 +82,19 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
         viewModelScope.launch {
             val newIndex = max(0, currentChapterIndex.value - 1)
             if (newIndex != mutableCurrentChapterIndex.value) {
-                Log.d("####", "navigateToPrevious")
                 mutableCurrentChapterIndex.emit(newIndex)
+                updateSeekFlag(false, chapters.value[newIndex], true)
             }
+        }
+    }
+
+    private fun updateSeekFlag(
+        isAutomatic: Boolean,
+        currentChapter: ChapterApi,
+        backNavigation: Boolean
+    ) {
+        if (backNavigation || (!isAutomatic && (currentChapter.startAt ?: 0) > 0)) {
+            mutableSeekFlag.value = mutableSeekFlag.value + 1
         }
     }
 

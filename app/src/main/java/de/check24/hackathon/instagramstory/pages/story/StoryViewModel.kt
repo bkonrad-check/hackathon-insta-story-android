@@ -20,6 +20,9 @@ class StoryViewModel : ViewModel() {
     private val mutableCurrentChapter = MutableStateFlow(0)
     val currentChapter: StateFlow<Int> get() = mutableCurrentChapter
 
+    private val mutableIsPaused = MutableStateFlow(false)
+    val isPaused: StateFlow<Boolean> get() = mutableIsPaused
+
     private lateinit var story: Story
 
     init {
@@ -30,6 +33,20 @@ class StoryViewModel : ViewModel() {
         viewModelScope.launch {
             story = DataSource(RetrofitClient().createService()).stories().stories.get(3)
             mutableChapters.emit(story.chapters)
+        }
+    }
+
+    fun onPress() {
+        viewModelScope.launch {
+            mutableIsPaused.emit(true)
+        }
+    }
+
+    fun onPressRelease() {
+        if(isPaused.value) {
+            viewModelScope.launch {
+                mutableIsPaused.emit(false)
+            }
         }
     }
 

@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -20,13 +24,16 @@ import androidx.media3.ui.PlayerView
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import de.check24.hackathon.instagramstory.mod.ChapterApi
+import de.check24.hackathon.instagramstory.pages.story.StoryViewModel
 import de.check24.hackathon.instagramstory.ui.theme.Background
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun StoryContent(
     modifier: Modifier,
-    chapter: ChapterApi
+    chapter: ChapterApi,
+    storyViewModel: StoryViewModel
 ) {
     Box(modifier = modifier) {
         if(chapter.type == "IMAGE") {
@@ -76,6 +83,16 @@ fun StoryContent(
                         playerView
                     },
                 )
+            }
+
+            LaunchedEffect("playerGesture") {
+                storyViewModel.isPaused.collect {
+                    if(it) {
+                        player.pause()
+                    } else {
+                        player.play()
+                    }
+                }
             }
         }
     }

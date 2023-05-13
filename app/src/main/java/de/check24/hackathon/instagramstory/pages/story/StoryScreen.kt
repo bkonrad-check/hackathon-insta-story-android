@@ -28,9 +28,9 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
     val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
-    val isPaused = remember { mutableStateOf(false) }
+    val isPaused = viewModel.isPaused.collectAsStateWithLifecycle()
 
-    if(stepCount == 0) return
+    if (stepCount == 0) return
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val imageModifier = Modifier
@@ -46,18 +46,20 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
                     },
                     onPress = {
                         try {
-                            isPaused.value = true
                             awaitRelease()
                         } finally {
-                            isPaused.value = false
+                            viewModel.onPressRelease()
                         }
+                    },
+                    onLongPress = {
+                        viewModel.onPress()
                     }
                 )
             }
 
-        val chapter = chapters [currentChapter.value]
+        val chapter = chapters[currentChapter.value]
 
-        StoryContent(imageModifier, chapter)
+        StoryContent(imageModifier, chapter, viewModel)
 
         InstagramProgressIndicator(
             modifier = Modifier
@@ -68,7 +70,7 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
             currentStep = currentChapter.value,
-            onStepChanged = { viewModel.navigateToNext()},
+            onStepChanged = { viewModel.navigateToNext() },
             isPaused = isPaused.value,
             onComplete = { }
         )

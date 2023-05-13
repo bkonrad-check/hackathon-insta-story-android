@@ -1,6 +1,7 @@
 package de.check24.hackathon.instagramstory.pages.story
 
 import android.util.Log
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.check24.hackathon.instagramstory.mod.ChapterApi
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class StoryViewModel(private val story: Story) : ViewModel() {
+class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
@@ -26,9 +27,17 @@ class StoryViewModel(private val story: Story) : ViewModel() {
         mutableChapters.value = story.chapters
     }
 
+    private val player = AudioPlayer(context)
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying: StateFlow<Boolean> = _isPlaying
+
+    val audioPlayer = createAudioPlayer()
+
+
     fun onPress() {
         viewModelScope.launch {
             mutableIsPaused.emit(true)
+            _isPlaying.value = false
             Log.d("####", "onPress")
         }
     }
@@ -37,6 +46,7 @@ class StoryViewModel(private val story: Story) : ViewModel() {
         if (isPaused.value) {
             viewModelScope.launch {
                 mutableIsPaused.emit(false)
+                _isPlaying.value = true
                 Log.d("####", "onPressRelease")
             }
         }
@@ -60,6 +70,25 @@ class StoryViewModel(private val story: Story) : ViewModel() {
                 mutableCurrentChapterIndex.emit(newIndex)
             }
         }
+    }
+
+    private fun createAudioPlayer(): AudioPlayer {
+        // Initialize audio player and set up callbacks for playback events
+
+        player.setOnPreparedListener {
+            player.start()
+        }
+
+        player.setOnCompletionListener {
+            _isPlaying.value = false
+        }
+
+        return player
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioPlayer.release() // Release resources when ViewModel is destroyed
     }
 
 }

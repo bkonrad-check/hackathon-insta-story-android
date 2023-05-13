@@ -1,7 +1,7 @@
-@file:UnstableApi package de.check24.hackathon.instagramstory.pages.story.ui
+@file:UnstableApi
 
+package de.check24.hackathon.instagramstory.pages.story.ui
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +29,7 @@ fun StoryContent(
     chapter: ChapterApi
 ) {
     Box(modifier = modifier) {
-        if(chapter.type == "IMAGE") {
+        if (chapter.type == "IMAGE") {
             Image(
                 painter = rememberAsyncImagePainter(
                     ImageRequest.Builder(LocalContext.current)
@@ -49,7 +49,7 @@ fun StoryContent(
                 }
             }
 
-            if(chapter.isContinuousPlayback().not()) {
+            if (chapter.isContinuousPlayback().not()) {
                 val mediaItem = MediaItem.fromUri(chapter.url)
                 player.setMediaItem(mediaItem)
                 // Prepare the player.
@@ -57,7 +57,7 @@ fun StoryContent(
             }
 
             // Adds view to Compose
-            if(chapter.startAt != null && chapter.endAt != null) {
+            if (chapter.startAt != null && chapter.endAt != null) {
                 player.seekTo(chapter.startAt.toLong())
             }
 

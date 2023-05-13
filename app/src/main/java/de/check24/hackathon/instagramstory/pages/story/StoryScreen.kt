@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -20,6 +18,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.check24.hackathon.instagramstory.mod.Cache
 import de.check24.hackathon.instagramstory.mod.Story
+import de.check24.hackathon.instagramstory.pages.story.ui.BannersDrawer
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
@@ -29,11 +28,11 @@ fun StoryScreen(
     viewModel: StoryViewModel = viewModel(
         factory = StoryViewModelFactory(
             story,
-            LocalContext.current
-        )
+            LocalContext.current,
+        ),
     ),
     onNavigateToStory: (Story) -> Unit,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ) {
     viewModel.onNavigateToStory = { onNavigateToStory(it) }
     viewModel.onNavigateBack = { onBackPressed() }
@@ -45,10 +44,11 @@ fun InstagramStory(
     viewModel: StoryViewModel,
     onNavigateToStory: (Story) -> Unit,
     story: Story,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ) {
     val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
     val stepCount = chapters.size
+    val snackbar = viewModel.snackbar.collectAsStateWithLifecycle()
     val currentChapterIndex = viewModel.currentChapterIndex.collectAsStateWithLifecycle()
     val isPaused = viewModel.isPaused.collectAsStateWithLifecycle().value
     val isPlaying by viewModel.isPlaying.collectAsState()
@@ -77,15 +77,15 @@ fun InstagramStory(
                     },
                     onLongPress = {
                         viewModel.onPress()
-                    }
+                    },
                 )
             }
-
 
         val chapter = remember("$currentChapterIndex") {
             chapters[currentChapterIndex.value]
         }
         StoryContent(imageModifier, chapter, isPaused)
+        BannersDrawer(chapter.banners, viewModel::onInteractionClick)
 
         InstagramProgressIndicator(
             stepCount,
@@ -95,7 +95,7 @@ fun InstagramStory(
             viewModel,
             story,
             onBackPressed,
-            onNavigateToStory
+            onNavigateToStory,
         )
     }
 }
@@ -109,7 +109,7 @@ fun InstagramProgressIndicator(
     viewModel: StoryViewModel,
     story: Story,
     onBackPressed: () -> Unit,
-    onNavigateToStory: (Story) -> Unit
+    onNavigateToStory: (Story) -> Unit,
 ) {
     InstagramProgressIndicator(
         modifier = Modifier
@@ -130,8 +130,6 @@ fun InstagramProgressIndicator(
                 val nextStory = stories.indexOf(story) + 1
                 onNavigateToStory(stories[nextStory])
             }
-        }
+        },
     )
 }
-
-

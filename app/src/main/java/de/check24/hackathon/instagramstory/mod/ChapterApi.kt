@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChapterApi(
-
+    val banners: List<Banner>,
     val endAt: Int?,
     val id: Int,
     val length: Int,

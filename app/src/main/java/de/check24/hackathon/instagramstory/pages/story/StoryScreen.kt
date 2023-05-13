@@ -24,21 +24,20 @@ import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 @Composable
 fun StoryScreen(
     story: Story,
-    viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story))
 ) {
     val context = LocalContext.current
-    val audioViewModel = viewModel(key = "audioViewModel") { AudioViewModel(context) }
-    InstagramStory(viewModel, audioViewModel, story)
+    val viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story,context))
+    InstagramStory(viewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, story: Story) {
+fun InstagramStory(viewModel: StoryViewModel, story: Story) {
     val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
-    val isPlaying by audioViewModel.isPlaying.collectAsState()
-    if (!isPlaying) audioViewModel.audioPlayer.start()
+    val isPlaying by viewModel.isPlaying.collectAsState()
+    if (!isPlaying) viewModel.audioPlayer.start()
 
     if (stepCount == 0) return
 
@@ -57,10 +56,10 @@ fun InstagramStory(viewModel: StoryViewModel, audioViewModel: AudioViewModel, st
                     onPress = {
                         try {
                             isPaused.value = true
-                            audioViewModel.togglePlayPause()
+                            viewModel.togglePlayPause()
                             awaitRelease()
                         } finally {
-                            audioViewModel.togglePlayPause()
+                            viewModel.togglePlayPause()
                             isPaused.value = false
                         }
                     }

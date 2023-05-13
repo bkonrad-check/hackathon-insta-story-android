@@ -1,5 +1,6 @@
 package de.check24.hackathon.instagramstory.pages.story
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.check24.hackathon.instagramstory.mod.ChapterApi
@@ -15,8 +16,8 @@ class StoryViewModel(private val story: Story) : ViewModel() {
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
 
-    private val mutableCurrentChapter = MutableStateFlow(0)
-    val currentChapter: StateFlow<Int> get() = mutableCurrentChapter
+    private val mutableCurrentChapterIndex = MutableStateFlow(0)
+    val currentChapterIndex: StateFlow<Int> get() = mutableCurrentChapterIndex
 
     private val mutableIsPaused = MutableStateFlow(false)
     val isPaused: StateFlow<Boolean> get() = mutableIsPaused
@@ -28,26 +29,36 @@ class StoryViewModel(private val story: Story) : ViewModel() {
     fun onPress() {
         viewModelScope.launch {
             mutableIsPaused.emit(true)
+            Log.d("####", "onPress")
         }
     }
 
     fun onPressRelease() {
-        if(isPaused.value) {
+        if (isPaused.value) {
             viewModelScope.launch {
                 mutableIsPaused.emit(false)
+                Log.d("####", "onPressRelease")
             }
         }
     }
 
     fun navigateToNext() {
         viewModelScope.launch {
-            mutableCurrentChapter.emit(min(story.chapters.size - 1, currentChapter.value + 1))
+            val newIndex = min(story.chapters.size - 1, currentChapterIndex.value + 1)
+            if (newIndex != mutableCurrentChapterIndex.value) {
+                Log.d("####", "navigateToNext")
+                mutableCurrentChapterIndex.emit(newIndex)
+            }
         }
     }
 
     fun navigateToPrevious() {
         viewModelScope.launch {
-            mutableCurrentChapter.emit(max(0, currentChapter.value - 1))
+            val newIndex = max(0, currentChapterIndex.value - 1)
+            if (newIndex != mutableCurrentChapterIndex.value) {
+                Log.d("####", "navigateToPrevious")
+                mutableCurrentChapterIndex.emit(newIndex)
+            }
         }
     }
 

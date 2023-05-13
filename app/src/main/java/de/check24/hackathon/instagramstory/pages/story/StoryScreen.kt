@@ -9,28 +9,31 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 
 @Composable
-fun StoryScreen(viewModel: StoryViewModel = viewModel(), story: Story) {
-    InstagramStory(viewModel, story)
+fun StoryScreen(
+    story: Story,
+    viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story))
+) {
+    InstagramStory(viewModel)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel, story: Story) {
-    val chapters = story.chapters
+fun InstagramStory(viewModel: StoryViewModel) {
+    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
 
-    if(stepCount == 0) return
+    if (stepCount == 0) return
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val imageModifier = Modifier
@@ -55,7 +58,7 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
                 )
             }
 
-        val chapter = chapters [currentChapter.value]
+        val chapter = chapters[currentChapter.value]
 
         StoryContent(imageModifier, chapter)
 
@@ -68,7 +71,7 @@ fun InstagramStory(viewModel: StoryViewModel, story: Story) {
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
             currentStep = currentChapter.value,
-            onStepChanged = { viewModel.navigateToNext()},
+            onStepChanged = { viewModel.navigateToNext() },
             isPaused = isPaused.value,
             onComplete = { }
         )

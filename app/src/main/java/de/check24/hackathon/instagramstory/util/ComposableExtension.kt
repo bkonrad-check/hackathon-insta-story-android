@@ -1,9 +1,7 @@
 package de.check24.hackathon.instagramstory.util
 
-import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.height
@@ -19,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -72,7 +70,9 @@ fun Modifier.advancedShadow(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AnimatedBox(
-    clickableCallback: (()->Unit)?,
+    clickableCallback: (() -> Unit)?,
+    longPress: (() -> Unit)?,
+    longPressRelease: (() -> Unit)?,
     modifier: Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
@@ -80,22 +80,32 @@ fun AnimatedBox(
     val scale = animateFloatAsState(if (selected.value) 0.9f else 1f)
     var modifierLocal: Modifier = modifier
     if (clickableCallback != null) {
-        modifierLocal = modifierLocal.pointerInteropFilter {
-            when (it.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    selected.value = true
-                }
-
-                MotionEvent.ACTION_UP -> {
-                    clickableCallback()
-                    selected.value = false
-                }
+        modifierLocal = modifierLocal
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { offset ->
+                        selected.value = true
+                        clickableCallback()
+                        selected.value = false
+                    },
+                    onPress = {
+                        try {
+                            selected.value = true
+                            awaitRelease()
+                        } finally {
+                            selected.value = false
+                            longPressRelease?.invoke()
+                        }
+                    },
+                    onLongPress = {
+                        longPress?.invoke()
+                        selected.value = true
+                    },
+                )
             }
-            true
-        }
     }
     Box(
-        modifier = modifierLocal.scale(scale.value)
+        modifier = modifierLocal.scale(scale.value),
     ) {
         content()
     }

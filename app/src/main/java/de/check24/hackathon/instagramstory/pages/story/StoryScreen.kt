@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import de.check24.hackathon.instagramstory.mod.Cache
 import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
@@ -25,28 +24,20 @@ import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
 @Composable
 fun StoryScreen(
     story: Story,
-    viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story)),
-    onNavigateToStory: (Story) -> Unit,
-    onBackPressed: () -> Unit
 ) {
-    InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
     val context = LocalContext.current
-    val audioViewModel = viewModel(key = "audioViewModel") { AudioViewModel(context) }
-    InstagramStory(viewModel, audioViewModel, story)
+    val viewModel: StoryViewModel = viewModel(factory = StoryViewModelFactory(story,context))
+    InstagramStory(viewModel, story)
 }
 
 @Composable
-fun InstagramStory(viewModel: StoryViewModel,
-                   audioViewModel: AudioViewModel,
-                   onNavigateToStory: (Story) -> Unit,
-                   story: Story,
-                   onBackPressed: () -> Unit) {
+fun InstagramStory(viewModel: StoryViewModel, story: Story) {
     val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
-    val isPlaying by audioViewModel.isPlaying.collectAsState()
-    if (!isPlaying) audioViewModel.audioPlayer.start()
+    val isPlaying by viewModel.isPlaying.collectAsState()
+    if (!isPlaying) viewModel.audioPlayer.start()
 
     if (stepCount == 0) return
 
@@ -65,10 +56,10 @@ fun InstagramStory(viewModel: StoryViewModel,
                     onPress = {
                         try {
                             isPaused.value = true
-                            audioViewModel.togglePlayPause()
+                            viewModel.togglePlayPause()
                             awaitRelease()
                         } finally {
-                            audioViewModel.togglePlayPause()
+                            viewModel.togglePlayPause()
                             isPaused.value = false
                         }
                     }
@@ -90,15 +81,7 @@ fun InstagramStory(viewModel: StoryViewModel,
             currentStep = currentChapter.value,
             onStepChanged = { viewModel.navigateToNext() },
             isPaused = isPaused.value,
-            onComplete = {
-                val stories = Cache.stories
-                if (stories.lastOrNull() == story) {
-                    onBackPressed()
-                } else {
-                    val nextStory = stories.indexOf(story) + 1
-                    onNavigateToStory(stories[nextStory])
-                }
-            }
+            onComplete = { }
         )
     }
 }

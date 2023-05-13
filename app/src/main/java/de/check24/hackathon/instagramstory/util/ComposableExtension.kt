@@ -3,6 +3,7 @@ package de.check24.hackathon.instagramstory.util
 import android.view.MotionEvent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.height
@@ -71,21 +72,24 @@ fun Modifier.advancedShadow(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AnimatedBox(
-    animationEnabled: Boolean,
+    clickableCallback: (()->Unit)?,
     modifier: Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
     val selected = remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (selected.value) 0.9f else 1f)
     var modifierLocal: Modifier = modifier
-    if (animationEnabled) {
+    if (clickableCallback != null) {
         modifierLocal = modifierLocal.pointerInteropFilter {
             when (it.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    selected.value = true }
+                    selected.value = true
+                }
 
                 MotionEvent.ACTION_UP -> {
-                    selected.value = false }
+                    clickableCallback()
+                    selected.value = false
+                }
             }
             true
         }

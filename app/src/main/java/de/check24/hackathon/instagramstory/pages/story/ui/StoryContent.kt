@@ -29,7 +29,7 @@ import de.check24.hackathon.instagramstory.ui.theme.Background
 fun StoryContent(
     modifier: Modifier,
     chapter: ChapterApi,
-    storyViewModel: StoryViewModel
+    isPaused: Boolean
 ) {
 
     Box(modifier = modifier) {
@@ -72,17 +72,12 @@ fun StoryContent(
                     this.useController = false
                 }
             }
-
             VideoSurface(playerView)
 
-            LaunchedEffect("playerGesture") {
-                storyViewModel.isPaused.collect {
-                    if(it) {
-                        player.pause()
-                    } else {
-                        player.play()
-                    }
-                }
+            if (isPaused) {
+                player.pause()
+            } else {
+                player.play()
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -50,7 +51,7 @@ fun InstagramStory(
     val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
     val stepCount = chapters.size
     val currentChapterIndex = viewModel.currentChapterIndex.collectAsStateWithLifecycle()
-    val isPaused = remember { mutableStateOf(false) }
+    val isPaused = viewModel.isPaused.collectAsStateWithLifecycle().value
     val isPlaying by viewModel.isPlaying.collectAsState()
     if (!isPlaying) viewModel.audioPlayer.start()
 
@@ -81,16 +82,17 @@ fun InstagramStory(
                 )
             }
 
+
         val chapter = remember("$currentChapterIndex") {
             chapters[currentChapterIndex.value]
         }
-        StoryContent(imageModifier, chapter, viewModel)
+        StoryContent(imageModifier, chapter, isPaused)
 
         InstagramProgressIndicator(
             stepCount,
             chapter.length,
             currentChapterIndex.value,
-            isPaused.value,
+            isPaused,
             viewModel,
             story,
             onBackPressed,

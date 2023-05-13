@@ -57,12 +57,16 @@ class MainActivity : ComponentActivity() {
                                     val json = Uri.encode(Gson().toJson(it))
                                     navController.navigate("story/$json")
                                 }, onNavigateBackToHome = {
-                                    navController.popBackStack(
-                                        navController.graph.startDestinationId,
-                                        inclusive = false
-                                    )
+                                    if (navController.previousBackStackEntry != null) {
+                                        navController.popBackStack(
+                                            navController.graph.startDestinationId,
+                                            inclusive = false
+                                        )
+                                    }
                                 }, onNavigateBack = {
-                                    navController.popBackStack()
+                                    if (navController.previousBackStackEntry != null) {
+                                        navController.popBackStack()
+                                    }
                                 })
                         }
 

@@ -28,7 +28,8 @@ import de.check24.hackathon.instagramstory.ui.theme.Background
 fun StoryContent(
     modifier: Modifier,
     chapter: ChapterApi,
-    isPaused: Boolean
+    isPaused: Boolean,
+    seekFlag: Int
 ) {
 
     Box(modifier = modifier) {
@@ -55,6 +56,7 @@ fun StoryContent(
             val mediaItem = remember { mutableStateOf(MediaItem.fromUri(chapter.url)) }
 
             // Prepare the player and load new media item when url changes.
+
             LaunchedEffect(chapter.url) {
                 player.stop()
                 player.clearMediaItems()
@@ -64,7 +66,7 @@ fun StoryContent(
             }
 
             // Seek to the specified start time only if necessary.
-            LaunchedEffect(chapter.startAt) {
+            LaunchedEffect(seekFlag) {
                 if (chapter.startAt != null && chapter.endAt != null) {
                     player.seekTo(chapter.startAt.toLong())
                 }
@@ -79,12 +81,10 @@ fun StoryContent(
             }
             VideoSurface(playerView)
 
-            LaunchedEffect(isPaused) {
-                if (isPaused) {
-                    player.pause()
-                } else {
-                    player.play()
-                }
+            if (isPaused) {
+                player.pause()
+            } else {
+                player.play()
             }
         }
     }

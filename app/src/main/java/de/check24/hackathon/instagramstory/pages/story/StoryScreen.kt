@@ -46,8 +46,8 @@ fun StoryScreen(
 ) {
     viewModel.onNavigateToStory = { onNavigateToStory(it) }
     viewModel.onNavigateBack = { onNavigateBack() }
-    viewModel.onNavigateBackToHome = { onNavigateBackToHome }
-    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBack)
+    viewModel.onNavigateBackToHome = { onNavigateBackToHome() }
+    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBackToHome)
 }
 
 @Composable
@@ -62,6 +62,7 @@ fun InstagramStory(
     val snackbar = viewModel.snackbar.collectAsStateWithLifecycle()
     val currentChapterIndex = viewModel.currentChapterIndex.collectAsStateWithLifecycle()
     val isPaused = viewModel.isPaused.collectAsStateWithLifecycle().value
+    val seekFlag = viewModel.seekFlag.collectAsStateWithLifecycle().value
     val isPlaying by viewModel.isPlaying.collectAsState()
     if (!isPlaying) viewModel.audioPlayer.start()
 
@@ -95,7 +96,7 @@ fun InstagramStory(
         val chapter = remember("$currentChapterIndex") {
             chapters[currentChapterIndex.value]
         }
-        StoryContent(imageModifier, chapter, isPaused)
+        StoryContent(imageModifier, chapter, isPaused, seekFlag)
         BannersDrawer(
             chapter.banners,
             viewModel::onInteractionClick,
@@ -167,7 +168,7 @@ fun InstagramProgressIndicator(
             unSelectedColor = Color.LightGray,
             selectedColor = Color.White,
             currentStep = currentChapterIndex,
-            onStepChanged = { viewModel.navigateToNext() },
+            onStepChanged = { viewModel.navigateToNext(isAutomatic = true) },
             isPaused = isPaused,
             onComplete = {
                 val stories = Cache.stories

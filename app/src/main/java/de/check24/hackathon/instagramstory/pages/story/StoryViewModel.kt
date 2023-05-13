@@ -4,6 +4,7 @@ import android.util.Log
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.check24.hackathon.instagramstory.mod.Cache
 import de.check24.hackathon.instagramstory.mod.ChapterApi
 import de.check24.hackathon.instagramstory.mod.Story
 import kotlin.math.max
@@ -14,6 +15,8 @@ import kotlinx.coroutines.launch
 
 class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
+    var onNavigateToStory: ((Story) -> Unit)?= null
+    var onNavigateBack: (() -> Unit)?= null
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
 
@@ -58,6 +61,15 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
             if (newIndex != mutableCurrentChapterIndex.value) {
                 Log.d("####", "navigateToNext")
                 mutableCurrentChapterIndex.emit(newIndex)
+            }
+            else if (newIndex == mutableCurrentChapterIndex.value) {
+                val stories = Cache.stories
+                if (story == stories.lastOrNull()) {
+                    onNavigateBack?.invoke()
+                } else {
+                    val nextStory = stories.indexOf(story) +1
+                    onNavigateToStory?.invoke(Cache.stories[nextStory])
+                }
             }
         }
     }

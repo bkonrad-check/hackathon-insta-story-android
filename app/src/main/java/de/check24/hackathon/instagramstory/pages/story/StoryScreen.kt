@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.check24.hackathon.instagramstory.mod.Cache
-import de.check24.hackathon.instagramstory.mod.ChapterApi
 import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.pages.story.ui.InstagramProgressIndicator
 import de.check24.hackathon.instagramstory.pages.story.ui.StoryContent
@@ -38,6 +35,8 @@ fun StoryScreen(
     onNavigateToStory: (Story) -> Unit,
     onBackPressed: () -> Unit
 ) {
+    viewModel.onNavigateToStory = { onNavigateToStory(it) }
+    viewModel.onNavigateBack = { onBackPressed() }
     InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
 }
 

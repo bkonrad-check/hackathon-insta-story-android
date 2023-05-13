@@ -4,15 +4,16 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.media3.common.util.UnstableApi
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.gson.Gson
 import de.check24.hackathon.instagramstory.mod.Story
 import de.check24.hackathon.instagramstory.navigation.StoryParamType
@@ -22,17 +23,18 @@ import de.check24.hackathon.instagramstory.ui.theme.InstagramStoryTheme
 
 @UnstableApi
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             InstagramStoryTheme {
-                val navController = rememberNavController()
+                val navController = rememberAnimatedNavController()
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    NavHost(navController = navController, startDestination = "home") {
+                    AnimatedNavHost(navController = navController, startDestination = "home") {
                         composable("home") {
                             HomeScreen(
                                 onNavigateToStory = {
@@ -54,7 +56,10 @@ class MainActivity : ComponentActivity() {
                                 val json = Uri.encode(Gson().toJson(it))
                                 navController.navigate("story/$json")
                             }, onBackPressed = {
-                                navController.popBackStack(navController.graph.startDestinationId, inclusive = false)
+                                navController.popBackStack(
+                                    navController.graph.startDestinationId,
+                                    inclusive = false
+                                )
                             })
                         }
 

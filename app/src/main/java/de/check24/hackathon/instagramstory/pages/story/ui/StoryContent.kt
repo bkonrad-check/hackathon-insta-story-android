@@ -28,6 +28,7 @@ fun StoryContent(
     modifier: Modifier,
     chapter: ChapterApi
 ) {
+
     Box(modifier = modifier) {
         if (chapter.type == "IMAGE") {
             Image(

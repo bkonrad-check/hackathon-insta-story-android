@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,19 +30,23 @@ fun StoryScreen(
     onBackPressed: () -> Unit
 ) {
     InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
+    val context = LocalContext.current
+    val audioViewModel = viewModel(key = "audioViewModel") { AudioViewModel(context) }
+    InstagramStory(viewModel, audioViewModel, story)
 }
 
 @Composable
-fun InstagramStory(
-    viewModel: StoryViewModel,
-    onNavigateToStory: (Story) -> Unit,
-    story: Story,
-    onBackPressed: () -> Unit
-) {
-    val chapters = viewModel.chapters.collectAsStateWithLifecycle().value
+fun InstagramStory(viewModel: StoryViewModel,
+                   audioViewModel: AudioViewModel,
+                   onNavigateToStory: (Story) -> Unit,
+                   story: Story,
+                   onBackPressed: () -> Unit) {
+    val chapters = story.chapters
     val currentChapter = viewModel.currentChapter.collectAsStateWithLifecycle()
     val stepCount = chapters.size
     val isPaused = remember { mutableStateOf(false) }
+    val isPlaying by audioViewModel.isPlaying.collectAsState()
+    if (!isPlaying) audioViewModel.audioPlayer.start()
 
     if (stepCount == 0) return
 
@@ -58,8 +65,10 @@ fun InstagramStory(
                     onPress = {
                         try {
                             isPaused.value = true
+                            audioViewModel.togglePlayPause()
                             awaitRelease()
                         } finally {
+                            audioViewModel.togglePlayPause()
                             isPaused.value = false
                         }
                     }

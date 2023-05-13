@@ -88,7 +88,12 @@ fun InstagramStory(
             chapters[currentChapterIndex.value]
         }
         StoryContent(imageModifier, chapter, isPaused)
-        BannersDrawer(chapter.banners, viewModel::onInteractionClick)
+        BannersDrawer(
+            chapter.banners,
+            viewModel::onInteractionClick,
+            viewModel::onPress,
+            viewModel::onPressRelease
+        )
 
         InstagramProgressIndicator(
             stepCount,

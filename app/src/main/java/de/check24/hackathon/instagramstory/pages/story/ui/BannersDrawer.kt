@@ -40,6 +40,8 @@ import kotlin.math.roundToInt
 fun BannersDrawer(
     list: List<Banner>,
     onInteractionClick: (String) -> Unit,
+    onLongPress: () -> Unit,
+    onLongPressRelease: () -> Unit
 ) {
     var screenSize by remember { mutableStateOf(Size.Zero) }
     BoxWithConstraints(
@@ -88,6 +90,8 @@ fun BannersDrawer(
                     } else {
                         null
                     },
+                    onLongPress,
+                    onLongPressRelease,
                     boxModifier,
                 ) {
                     var sizeModifier: Modifier = Modifier

@@ -33,11 +33,13 @@ fun StoryScreen(
         ),
     ),
     onNavigateToStory: (Story) -> Unit,
-    onBackPressed: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateBackToHome: () -> Unit
 ) {
     viewModel.onNavigateToStory = { onNavigateToStory(it) }
-    viewModel.onNavigateBack = { onBackPressed() }
-    InstagramStory(viewModel, onNavigateToStory, story, onBackPressed)
+    viewModel.onNavigateBack = { onNavigateBack() }
+    viewModel.onNavigateBackToHome = { onNavigateBackToHome }
+    InstagramStory(viewModel, onNavigateToStory, story, onNavigateBack)
 }
 
 @Composable

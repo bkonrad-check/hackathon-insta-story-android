@@ -17,6 +17,7 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
 
     var onNavigateToStory: ((Story) -> Unit)?= null
     var onNavigateBack: (() -> Unit)?= null
+    var onNavigateBackToHome: (() -> Unit)?= null
     private val mutableChapters = MutableStateFlow<List<ChapterApi>>(listOf())
     val chapters: StateFlow<List<ChapterApi>> get() = mutableChapters
 
@@ -68,7 +69,7 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
             else if (newIndex == mutableCurrentChapterIndex.value) {
                 val stories = Cache.stories
                 if (story == stories.lastOrNull()) {
-                    onNavigateBack?.invoke()
+                    onNavigateBackToHome?.invoke()
                 } else {
                     val nextStory = stories.indexOf(story) +1
                     onNavigateToStory?.invoke(Cache.stories[nextStory])
@@ -83,6 +84,8 @@ class StoryViewModel(context: Context, private val story: Story) : ViewModel() {
             if (newIndex != mutableCurrentChapterIndex.value) {
                 Log.d("####", "navigateToPrevious")
                 mutableCurrentChapterIndex.emit(newIndex)
+            } else {
+                onNavigateBack?.invoke()
             }
         }
     }
